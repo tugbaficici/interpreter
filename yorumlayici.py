@@ -39,7 +39,6 @@ def C():
         A()
         islemlerStack.pop()
         islemlerStack.append("C")
-        token=getToken()
         print(islemlerStack)
         token=getToken()
         C()
@@ -84,13 +83,18 @@ def A():
         islemlerStack.append(token)
         print(islemlerStack)
         E()
+        # elimizde bir sonraki token var 
         print(islemlerStack)
-        #token = getToken()  # noktalı virgülüde çıkarıyoruz
-        islemlerStack.pop()  # E çıktı
-        islemlerStack.pop()  # = çıktı
-        islemlerStack.pop()  # K çıktı
-        islemlerStack.append("A")
-        print(islemlerStack)
+        print(token)
+        token = getToken() # noktalı virgülüde çıkarıyoruz
+        if token==";":
+            islemlerStack.pop()  # E çıktı
+            islemlerStack.pop()  # = çıktı
+            islemlerStack.pop()  # K çıktı
+            islemlerStack.append("A")
+            print(islemlerStack)
+        else:
+            print("atama hatası")
     else:
         print("Atama sembolü eksik")
 
@@ -109,38 +113,68 @@ def G():
 
 
 def E():
-    print("e içinde")
+    # E → T {('+' | '-') T}  {-,+,T} 
+
     global token
     global islemlerStack
-    # expression  n
-    # E → T {('+' | '-') T}  t-t t+t
-    # ihtimal 1
-    T()
-    son = islemlerStack.pop()
-    if son == "T":
+    nonTerminal=["+","-"]
+
+    if token in nonTerminal:
+        islemlerStack.pop()#+ - çıkardı
+        islemlerStack.pop()#son kalan T
+        token=getToken()
+        islemlerStack.append(token)
+        print(islemlerStack)
+        E()
+    
+    else:
+        T()
+        print(islemlerStack)
+        islemlerStack.pop()
         islemlerStack.append("E")
         print(islemlerStack)
+        #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
+        token=getToken()
+        if token in nonTerminal:
+            islemlerStack.append(token)
+            E()
+        else:
+            setToken(token)
+        
 
-    # if(token=="+"):
-    #    islemlerStack.append()
-    #    E()
-    # elif(token=="-"):
-    #    islemlerStack.append()
-    #    E()
 
 
 def T():
+    # T → U {('*' | '/' | '%') U} u*u u/u u%u
     print("t içinde")
     global token
     global islemlerStack
-    # T → U {('*' | '/' | '%') U} u*u u/u u%u
-    # sadece u ihtimali
-    U()
-    son = islemlerStack.pop()
-    if son == "U":
+    
+    nonTerminal=["*","/","%"]
+
+    if token in nonTerminal:
+        islemlerStack.pop()#+ - çıkardı
+        islemlerStack.pop()#son kalan U
+        token=getToken()
+        islemlerStack.append(token)
+        print(islemlerStack)
+        T()
+    
+    else:
+        U()
+        islemlerStack.pop()
         islemlerStack.append("T")
         print(islemlerStack)
-
+        #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
+        token=getToken()
+        print(token)
+        if token in nonTerminal:
+            islemlerStack.append(token)
+            T()
+        else:
+            setToken(token)
+        
+            
 
 def U():
     print("u içinde")
@@ -148,22 +182,29 @@ def U():
     global islemlerStack
     # U → F '^' U | F
     # ihtimal 1 yok
-    F()
-    son = islemlerStack.pop()
-    if son == "F":
-        islemlerStack.append("U")
+    F() 
+    token =getToken()
+    if token == "^":
+        islemlerStack.pop()# F yi çıkar içerden
+        token=getToken()
+        islemlerStack.append(token)# yeni gelen eleman
         print(islemlerStack)
+        U()
+    else:
+        setToken(token)
+        son = islemlerStack.pop()
+        if son == "F":
+            islemlerStack.append("U")
+            print(islemlerStack)
 
 
 def F():
+    # F → '(' E ')' | K |  R
     print("f içinde")
     global islemlerStack
-    # F → '(' E ')' | K | R
     global token
-    # ihtimal 1 yok
+   
     print(token)
-    #if token == "(":
-    #    E()
     print(rakamMi(token))
     
     if rakamMi(token) == True:
@@ -177,6 +218,18 @@ def F():
         islemlerStack.pop()
         islemlerStack.append("F")
         print(islemlerStack)
+    elif token=="(":
+        token= getToken()
+        islemlerStack.append(token)
+        E()
+        token=getToken()
+        islemlerStack.append(token)
+        if(token==")"):
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.append("F")
+            print(islemlerStack) 
     else:
         return "Hata ! Gecersiz string !"
 
@@ -247,9 +300,12 @@ def getToken():
     top = stack.pop()
     return top
 
+def setToken(token):
+    global stack
+    stack.append(token)
 
 
-inputString = "n=0;"
+inputString = "n=(5+5)+5;"
 inputs="n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
