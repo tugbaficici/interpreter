@@ -23,10 +23,18 @@ def C():
         token = getToken()
         islemlerStack.append(token)
         I()
+        islemlerStack.pop()
+        islemlerStack.append("C")
+        print(islemlerStack)
+        token=getToken()
+        print("c token")
+        print(token)
+        C()
 
 
     elif token == "{":
         W()
+
 
     elif token == "<":
 
@@ -74,23 +82,34 @@ def I():
     global islemlerStack
     #####stackte [E  var
 
+    
+    
+    
+    E() 
+    
+    print(islemlerStack)
     token=getToken()
-    islemlerStack.append(token)
-    E()  # burada her türlü e çağrılacak iki ihtimal için
-    token=getToken()
+    print("token")
+    print(token)
     if token == "?":
         islemlerStack.append(token)
         token=getToken()#c
         islemlerStack.append(token)
+        
         C()# tek c geliyo
-        token=getToken()#:]
-        islemlerStack.append(token)
+        print(" :token")
+        print(token)
+        print(islemlerStack)
+        
         if token== ":":
+            islemlerStack.append(token)
             token =getToken()#c
             islemlerStack.append(token)
             C()# tek c geliyo
-            token =getToken()#]
+            #]
             islemlerStack.append(token)
+            print("token ] sanılan")
+            print(token)
             #[E?C:C]
             islemlerStack.pop()
             islemlerStack.pop()
@@ -100,16 +119,19 @@ def I():
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.append("I")
+            print(islemlerStack)
 
 
         elif token=="]":
             #[E?C]
+            islemlerStack.append(token)
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.append("I")
+            print(islemlerStack)
 
         else:
             print("sembol hatası")
@@ -129,11 +151,13 @@ def W():
     token=getToken()
     if token == "?":
         islemlerStack.append(token)
+        print(islemlerStack)
         token=getToken()#c
         islemlerStack.append(token)
         C()# tek c geliyo
         token=getToken()#}
         islemlerStack.append(token)
+        print(islemlerStack)
 
         #{E?C}
         islemlerStack.pop()
@@ -142,6 +166,7 @@ def W():
         islemlerStack.pop()
         islemlerStack.pop()
         islemlerStack.append("W")
+        print(islemlerStack)
 
 
 
@@ -404,7 +429,7 @@ def setToken(token):
 
 
 
-inputString = ">n;n=5;"
+inputString = "[n?<n;n=n+1;]"
 inputs="n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
