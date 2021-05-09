@@ -1,5 +1,3 @@
-
-
 def P():
     global islemlerStack
     print("P içinde")
@@ -23,16 +21,31 @@ def C():
     # C  → I | W | A | Ç | G
     if token == "[":
         token = getToken()
+        islemlerStack.append(token)
         I()
+
 
     elif token == "{":
         W()
 
     elif token == "<":
-        Cikis()
+
+        noktaliC()
+        islemlerStack.pop()
+        islemlerStack.append("C")
+        print(islemlerStack)
+        token=getToken()
+        C()
+
 
     elif token == ">":
         G()
+        islemlerStack.pop()
+        islemlerStack.append("C")
+        print(islemlerStack)
+        token=getToken()
+        C()
+
 
     elif kucukHarfMi(token) == True:  # token harf ise
         
@@ -55,18 +68,82 @@ def C():
 
 
 def I():
+    # I   → '[' E '?'  C{C} ':' C{C} ']' 
+    # I   → '[' E '?' C{C} ']'
     global token
-    # if
-    # I   → '[' E '?'  C{C} ':' C{C} ']' | '[' E '?' C{C} ']'
+    global islemlerStack
+    #####stackte [E  var
 
+    token=getToken()
+    islemlerStack.append(token)
     E()  # burada her türlü e çağrılacak iki ihtimal için
+    token=getToken()
+    if token == "?":
+        islemlerStack.append(token)
+        token=getToken()#c
+        islemlerStack.append(token)
+        C()# tek c geliyo
+        token=getToken()#:]
+        islemlerStack.append(token)
+        if token== ":":
+            token =getToken()#c
+            islemlerStack.append(token)
+            C()# tek c geliyo
+            token =getToken()#]
+            islemlerStack.append(token)
+            #[E?C:C]
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.append("I")
+
+
+        elif token=="]":
+            #[E?C]
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.append("I")
+
+        else:
+            print("sembol hatası")
+
+
 
 
 def W():
-    global token
-    # while
     # W → '{' E '?'  C{C} '}'
-    print("a")
+    global token
+    global islemlerStack
+
+    token=getToken()
+    islemlerStack.append(token)
+    
+    E()
+    token=getToken()
+    if token == "?":
+        islemlerStack.append(token)
+        token=getToken()#c
+        islemlerStack.append(token)
+        C()# tek c geliyo
+        token=getToken()#}
+        islemlerStack.append(token)
+
+        #{E?C}
+        islemlerStack.pop()
+        islemlerStack.pop()
+        islemlerStack.pop()
+        islemlerStack.pop()
+        islemlerStack.pop()
+        islemlerStack.append("W")
+
+
 
 
 def A():
@@ -99,17 +176,38 @@ def A():
         print("Atama sembolü eksik")
 
 
-def Cikis():
-    global token  # def Ç()
-    # çıktı
+def noktaliC():# def Ç()
     # Ç  → '<' E ';'
-    print("")
+    global token
+    global islemlerStack
+
+    token= getToken()
+    islemlerStack.append(token)
+    E()
+    islemlerStack.pop()
+    islemlerStack.pop()
+    islemlerStack.append("Ç")
+    token = getToken()#noktalı virgün çıksın
+    print(islemlerStack)
+    
+    
 
 
 def G():
-    global token
     # G → '>' K ';'
-    print("")
+    global token
+    global islemlerStack
+    
+    token= getToken()
+    islemlerStack.append(token)
+    K()
+    islemlerStack.pop()
+    islemlerStack.pop()
+    islemlerStack.append("G")
+    token = getToken()#noktalı virgün çıksın
+    print(islemlerStack)
+
+    
 
 
 def E():
@@ -208,13 +306,13 @@ def F():
     print(rakamMi(token))
     
     if rakamMi(token) == True:
-        K()
+        R()
         islemlerStack.pop()
         islemlerStack.append("F")
         print(islemlerStack)
     elif kucukHarfMi(token) == True:
         print("harf")
-        R()
+        K()
         islemlerStack.pop()
         islemlerStack.append("F")
         print(islemlerStack)
@@ -305,7 +403,8 @@ def setToken(token):
     stack.append(token)
 
 
-inputString = "n=(5+5)+5;"
+
+inputString = ">n;n=5;"
 inputs="n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
