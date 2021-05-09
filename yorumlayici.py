@@ -1,3 +1,4 @@
+
 def P():
     global islemlerStack
     print("P içinde")
@@ -5,7 +6,7 @@ def P():
     if token == ".":
         # program başarılı şekilde sonlandır.
         print("Accept")
-    else:
+    else:    
         C()  # geri döndüğünde token değişkeninde nokta olmalı global token?
         print(islemlerStack)
         print(token)
@@ -15,6 +16,8 @@ def P():
 
 def C():
     print("c içinde")
+    global siralama
+    siralama.append("C")
     global token
     global islemlerStack
     # işlem bittiğinde return .
@@ -60,6 +63,7 @@ def C():
         A()
         islemlerStack.pop()
         islemlerStack.append("C")
+        
         print(islemlerStack)
         token=getToken()
         C()
@@ -78,6 +82,8 @@ def C():
 def I():
     # I   → '[' E '?'  C{C} ':' C{C} ']' 
     # I   → '[' E '?' C{C} ']'
+    global siralama
+    siralama.append("I")
     global token
     global islemlerStack
     #####stackte [E  var
@@ -141,6 +147,8 @@ def I():
 
 def W():
     # W → '{' E '?'  C{C} '}'
+    global siralama
+    siralama.append("W")
     global token
     global islemlerStack
 
@@ -173,6 +181,8 @@ def W():
 
 def A():
     print("a içinde")
+    global siralama
+    siralama.append("A")
     global token
     global islemlerStack
     # atama
@@ -203,6 +213,8 @@ def A():
 
 def noktaliC():# def Ç()
     # Ç  → '<' E ';'
+    global siralama
+    siralama.append("Ç")
     global token
     global islemlerStack
 
@@ -220,6 +232,8 @@ def noktaliC():# def Ç()
 
 def G():
     # G → '>' K ';'
+    global siralama
+    siralama.append("G")
     global token
     global islemlerStack
     
@@ -237,7 +251,8 @@ def G():
 
 def E():
     # E → T {('+' | '-') T}  {-,+,T} 
-
+    global siralama
+    siralama.append("E")
     global token
     global islemlerStack
     nonTerminal=["+","-"]
@@ -269,6 +284,8 @@ def E():
 
 def T():
     # T → U {('*' | '/' | '%') U} u*u u/u u%u
+    global siralama
+    siralama.append("T")
     print("t içinde")
     global token
     global islemlerStack
@@ -300,6 +317,8 @@ def T():
             
 
 def U():
+    global siralama
+    siralama.append("U")
     print("u içinde")
     global token
     global islemlerStack
@@ -323,6 +342,8 @@ def U():
 
 def F():
     # F → '(' E ')' | K |  R
+    global siralama
+    siralama.append("F")
     print("f içinde")
     global islemlerStack
     global token
@@ -358,6 +379,8 @@ def F():
 
 
 def K():
+    global siralama
+    siralama.append("K")
     print("k içinde")
     global token
     global islemlerStack
@@ -374,6 +397,8 @@ def K():
 
 
 def R():
+    global siralama
+    siralama.append("R")
     print("r içinde")
     global token
     global islemlerStack
@@ -429,7 +454,10 @@ def setToken(token):
 
 
 
-inputString = "[n?<n;n=n+1;]"
+
+
+
+inputString = "n=0;{n-2*5?<n;n=n+1;}"
 inputs="n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
@@ -438,5 +466,19 @@ stack = ['$']
 inputToStack()  # Global tanimlama
 token = getToken()
 islemlerStack.append(token)
+#---------------------
+
+#Agaç çizimi için treelib eklendi.
+from treelib import Node, Tree
+siralama=['P']
+tree = Tree()
+tree.create_node("P", "P") 
+
+
+#---------------------
 
 P()
+
+print(siralama)
+#Ağacı göster
+tree.show()
