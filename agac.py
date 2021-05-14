@@ -15,8 +15,7 @@ def P():
 def C():
     C.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
 
@@ -110,8 +109,7 @@ def I():
 
     I.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -160,8 +158,7 @@ def I():
 def W():
     W.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -196,8 +193,7 @@ def W():
 def A():
     A.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -230,8 +226,7 @@ def noktaliC():
 
     noktaliC.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -280,8 +275,7 @@ def E():
 
     E.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -315,8 +309,7 @@ def T():
 
     T.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -350,8 +343,7 @@ def U():
 
     U.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -418,8 +410,7 @@ def F():
 def K():
     K.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -441,8 +432,7 @@ def R():
 
     R.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
@@ -530,7 +520,9 @@ tree.create_node("P", "P0")
 
 
 P()
-print(sonuc)
-# print(siralama)
+print("Sıralama: ", siralama)
 
+print("Tree: ")
 tree.show()
+
+print("Sonuç: ", sonuc)
