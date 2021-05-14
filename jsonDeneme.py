@@ -9,9 +9,8 @@ tree.create_node("W","W",parent="C2" )
 tree.show()
 count=0
 
-nested_dict = { 'dictA': {'key_1': 'value_1'},
-                'dictB': {'key_2': 'value_2'}}
+
 
                
 
-print(nested_dict["P"])
+

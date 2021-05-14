@@ -1,3 +1,5 @@
+import sys
+sys.tracebacklimit=0
 
 def P():
     global islemlerStack,token
@@ -78,10 +80,6 @@ def C():
         if(son=='$'):
             token = '.'
 
-    else:
-        return "Hata !"
-
-
 def I():
     # I   → '[' E '?'  C{C} ':' C{C} ']' 
     # I   → '[' E '?' C{C} ']'
@@ -122,7 +120,9 @@ def I():
             islemlerStack.append("I")
 
         else:
-            print("sembol hatası")
+            print("IF işlemlerinde beklenmedik token.")
+    else:
+        print("IF işlemlerinde '?' tokeni eksik.")
 
 def W():
     # W → '{' E '?'  C{C} '}'
@@ -148,6 +148,8 @@ def W():
         islemlerStack.pop()
         islemlerStack.append("W")
         setToken(token)
+    else:
+        print("WHILE işlemlerinde '?' tokeni eksik.")
 
 def A():
     global siralama,token,islemlerStack
@@ -168,9 +170,9 @@ def A():
             islemlerStack.pop()  # K çıktı
             islemlerStack.append("A")
         else:
-            print("atama hatası")
+            print("Atama işlemlerinde ';' tokeni eksik.")
     else:
-        print("Atama sembolü eksik")
+        print("Atama işlemlerinde '=' tokeni eksik.")
 
 def noktaliC():# def Ç()
     # Ç  → '<' E ';'
@@ -184,6 +186,8 @@ def noktaliC():# def Ç()
     islemlerStack.pop()
     islemlerStack.append("Ç")
     token = getToken()#noktalı virgün çıksın
+    if token != ";":
+        print("Girdi işlemlerinde ';' tokeni eksik.")
     
 def G():
     # G → '>' K ';'
@@ -197,6 +201,8 @@ def G():
     islemlerStack.pop()
     islemlerStack.append("G")
     token = getToken()#noktalı virgün çıksın
+    if token != ";":
+        print("Girdi işlemlerinde ';' tokeni eksik.")
    
 def E():
     # E → T {('+' | '-') T}  {-,+,T} 
@@ -270,6 +276,7 @@ def U():
 
 def F():
     # F → '(' E ')' | K |  R
+
     global siralama,token,islemlerStack
     siralama.append("F")
  
@@ -294,9 +301,11 @@ def F():
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.append("F")
+        else:
+            print("Gruplama işleminde ')' tokeni eksik.") 
 
     else:
-        return "Hata ! Gecersiz string !"
+        print("Gruplama işleminde beklenmedik token.") 
 
 
 def K():
@@ -309,10 +318,11 @@ def K():
         islemlerStack.append("K")
 
     else:
-        return False
+         print("Gelen token küçük harf değil.")
         # print girilen hatalı
 
 def R():
+    
     global siralama,token,islemlerStack
     siralama.append("R")
     # rakam
@@ -321,7 +331,7 @@ def R():
         islemlerStack.pop()
         islemlerStack.append("R")
     else:
-        return False
+        print("Gelen token rakam değil.")
         # print girilen hatalı
 
 def rakamMi(rakam):
@@ -362,6 +372,7 @@ def setToken(token):
     stack.append(token)
 
 
+
 inputString = "n=5;n=5;{n-2*5?<n;n=n+1;}{n-2*5?<n;n=n+1;}[n-2?<n;][n-2?<n;]<n;>g;>g;"
 inputs="n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
@@ -385,4 +396,4 @@ P()
 
 print(siralama)
 #Ağacı göster
-tree.show()
+#tree.show()
