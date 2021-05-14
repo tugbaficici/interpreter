@@ -1,16 +1,14 @@
-from treelib import Node, Tree
+from treelib import Tree
 import sys
-#sys.tracebacklimit=0
+sys.tracebacklimit=0
 
 
 def P():
-    global islemlerStack, token
+    global islemlerStack, token, sonuc
     if token == ".":
-        # program başarılı şekilde sonlandır.
-        print("Accept")
+        sonuc = "accept"
     else:
-
-        C()  # geri döndüğünde token değişkeninde nokta olmalı global token?
+        C()
         P()
 
 
@@ -22,12 +20,8 @@ def C():
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
 
-    #parentid=sys._getframe(1).f_code.co_name+
-    #tree.create_node("C","",parent="C2" )
     global siralama, token, islemlerStack
     siralama.append("C")
-    # işlem bittiğinde return .
-    # C  → I | W | A | Ç | G
 
     if token == "[":
         tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
@@ -123,9 +117,6 @@ def I():
     
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
     
-
-    # I   → '[' E '?'  C{C} ':' C{C} ']'
-    # I   → '[' E '?' C{C} ']'
     global siralama, token, islemlerStack
     siralama.append("I")
 
@@ -135,14 +126,13 @@ def I():
         islemlerStack.append(token)
         token = getToken()  # c
         islemlerStack.append(token)
-        C()  # tek c geliyo
+        C()
         if token == ":":
             islemlerStack.append(token)
             token = getToken()  # c
             islemlerStack.append(token)
-            C()  # tek c geliyo
+            C()
             islemlerStack.append(token)
-            #[E?C:C]
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
@@ -153,7 +143,6 @@ def I():
             islemlerStack.append("I")
 
         elif token == "]":
-            #[E?C]
             islemlerStack.append(token)
             islemlerStack.pop()
             islemlerStack.pop()
@@ -178,7 +167,6 @@ def W():
     
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
     
-    # W → '{' E '?'  C{C} '}'
     global siralama, token, islemlerStack
     siralama.append("W")
 
@@ -188,12 +176,12 @@ def W():
     token = getToken()
     if token == "?":
         islemlerStack.append(token)
-        token = getToken()  # c
+        token = getToken()
         islemlerStack.append(token)
-        C()  # tek c geliyo
-        token = getToken()  # }
+        C()
+        token = getToken()
         islemlerStack.append(token)
-        #{E?C}
+
         islemlerStack.pop()
         islemlerStack.pop()
         islemlerStack.pop()
@@ -218,8 +206,7 @@ def A():
 
     global siralama, token, islemlerStack
     siralama.append("A")
-    # atama
-    # A  → K '=' E ';'
+
     K()
     token = getToken()
     islemlerStack.append(token)
@@ -227,11 +214,11 @@ def A():
         token = getToken()
         islemlerStack.append(token)
         E()
-        token = getToken()  # noktalı virgülüde çıkarıyoruz
+        token = getToken() 
         if token == ";":
-            islemlerStack.pop()  # E çıktı
-            islemlerStack.pop()  # = çıktı
-            islemlerStack.pop()  # K çıktı
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
             islemlerStack.append("A")
         else:
             print("Atama işlemlerinde ';' tokeni eksik.")
@@ -239,8 +226,7 @@ def A():
         print("Atama işlemlerinde '=' tokeni eksik.")
 
 
-def noktaliC():  # def Ç()
-    # Ç  → '<' E ';'
+def noktaliC(): 
 
     noktaliC.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
@@ -261,7 +247,7 @@ def noktaliC():  # def Ç()
     islemlerStack.pop()
     islemlerStack.pop()
     islemlerStack.append("Ç")
-    token = getToken()  # noktalı virgün çıksın
+    token = getToken()
     if token != ";":
         print("Girdi işlemlerinde ';' tokeni eksik.")
 
@@ -270,15 +256,12 @@ def G():
 
     G.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
     
-
-    # G → '>' K ';'
     global siralama, token, islemlerStack
     siralama.append("G")
 
@@ -288,7 +271,7 @@ def G():
     islemlerStack.pop()
     islemlerStack.pop()
     islemlerStack.append("G")
-    token = getToken()  # noktalı virgün çıksın
+    token = getToken()
     if token != ";":
         print("Girdi işlemlerinde ';' tokeni eksik.")
 
@@ -303,17 +286,15 @@ def E():
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    
 
-    # E → T {('+' | '-') T}  {-,+,T}
     global siralama, token, islemlerStack
     siralama.append("E")
 
     nonTerminal = ["+", "-"]
 
     if token in nonTerminal:
-        islemlerStack.pop()  # + - çıkardı
-        islemlerStack.pop()  # son kalan T
+        islemlerStack.pop()
+        islemlerStack.pop()
         token = getToken()
         islemlerStack.append(token)
         E()
@@ -322,7 +303,6 @@ def E():
         T()
         islemlerStack.pop()
         islemlerStack.append("E")
-        #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
         token = getToken()
         if token in nonTerminal:
             islemlerStack.append(token)
@@ -341,17 +321,15 @@ def T():
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    
 
-    # T → U {('*' | '/' | '%') U} u*u u/u u%u
     global siralama, token, islemlerStack
     siralama.append("T")
 
     nonTerminal = ["*", "/", "%"]
 
     if token in nonTerminal:
-        islemlerStack.pop()  # + - çıkardı
-        islemlerStack.pop()  # son kalan U
+        islemlerStack.pop()
+        islemlerStack.pop()
         token = getToken()
         islemlerStack.append(token)
         T()
@@ -360,7 +338,6 @@ def T():
         U()
         islemlerStack.pop()
         islemlerStack.append("T")
-        #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
         token = getToken()
         if token in nonTerminal:
             islemlerStack.append(token)
@@ -383,14 +360,12 @@ def U():
 
     global siralama, token, islemlerStack
     siralama.append("U")
-    # U → F '^' U | F
-    # ihtimal 1 yok
     F()
     token = getToken()
     if token == "^":
-        islemlerStack.pop()  # F yi çıkar içerden
+        islemlerStack.pop()
         token = getToken()
-        islemlerStack.append(token)  # yeni gelen eleman
+        islemlerStack.append(token)
         U()
     else:
         setToken(token)
@@ -403,16 +378,12 @@ def F():
 
     F.counter += 1
     parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
-    childid = sys._getframe().f_code.co_name + str(globals()
-                                                   [sys._getframe().f_code.co_name].counter)
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
     
-
-    # F → '(' E ')' | K |  R
-
     global siralama, token, islemlerStack
     siralama.append("F")
 
@@ -457,15 +428,13 @@ def K():
 
     global siralama, token, islemlerStack
     siralama.append("K")
-    # harf
-    # K → 'a'  |  'b'  | … |  'z'
+
     if kucukHarfMi(token):
         islemlerStack.pop()
         islemlerStack.append("K")
 
     else:
         print("Gelen token küçük harf değil.")
-        # print girilen hatalı
 
 
 def R():
@@ -482,14 +451,12 @@ def R():
 
     global siralama, token, islemlerStack
     siralama.append("R")
-    # rakam
-    # R → '0'  |  '1'  | … |  '9'
+
     if rakamMi(token):
         islemlerStack.pop()
         islemlerStack.append("R")
     else:
         print("Gelen token rakam değil.")
-        # print girilen hatalı
 
 
 def rakamMi(rakam):
@@ -543,42 +510,27 @@ def checkIfCExists():
     else:
         return False
 
-P.counter = 0
-F.counter = 0
-U.counter = 0
-T.counter = 0
-E.counter = 0
-W.counter = 0
-I.counter = 0
-noktaliC.counter = 0
-G.counter = 0
-A.counter = 0
-C.counter = 0
 
-K.counter = 0
-R.counter = 0
+for func in ["P", "F", "U", "T", "E", "W", "I", "noktaliC", "G", "A", "C", "K", "R"]:
+    globals()[func].counter = 0
 
 
-inputString = "n=0;[n+2?n=n+1;]"
-inputs = "n=0;{n-2*5?<n;n=n+1;}"
+inputString = "n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
 
-# Main buradan başlamaktadır.
-inputToStack()  # Global tanimlama
+
+inputToStack()
 token = getToken()
 islemlerStack.append(token)
-#---------------------
 
-#Agaç çizimi için treelib eklendi.
 siralama = ['P']
 tree = Tree()
 tree.create_node("P", "P0")
-print("P", "P0", "created")
-#---------------------
+
 
 P()
+print(sonuc)
+# print(siralama)
 
-print(siralama)
-#Ağacı göster
 tree.show()
