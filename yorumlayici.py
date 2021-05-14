@@ -1,105 +1,136 @@
+from treelib import Tree
 import sys
 sys.tracebacklimit=0
 
+
 def P():
-    global islemlerStack,token
+    global islemlerStack, token, sonuc
     if token == ".":
-        # program başarılı şekilde sonlandır.
-        print("Accept")
-    else:    
-        C()  # geri döndüğünde token değişkeninde nokta olmalı global token?
+        sonuc = "accept"
+    else:
+        C()
         P()
-        
 
 
 def C():
-    global siralama,token,islemlerStack
+    C.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+
+    global siralama, token, islemlerStack
     siralama.append("C")
-    # işlem bittiğinde return .
-    # C  → I | W | A | Ç | G 
 
     if token == "[":
+        tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
         token = getToken()
         islemlerStack.append(token)
         I()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
+        cvarmi = islemlerStack.pop()
+        if cvarmi != "C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
+        token = getToken()
         if token != "$":
             islemlerStack.append(token)
-        C()
+        if checkIfCExists():
+            P()
+        else:
+            C()
 
     elif token == "{":
+        tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
         W()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
+        cvarmi = islemlerStack.pop()
+        if cvarmi != "C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
+        token = getToken()
         if token != "$":
             islemlerStack.append(token)
-        C()
+        if checkIfCExists():
+            P()
+        else:
+            C()
 
     elif token == "<":
+        tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
         noktaliC()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
+        cvarmi = islemlerStack.pop()
+        if cvarmi != "C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        C()
+        token = getToken()
+        if checkIfCExists():
+            P()
+        else:
+            C()
 
     elif token == ">":
+        tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
         G()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
+        cvarmi = islemlerStack.pop()
+        if cvarmi != "C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        C()
+        token = getToken()
+        if checkIfCExists():
+            P()
+        else:
+            C()
 
     elif kucukHarfMi(token) == True:  # token harf ise
+        tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
         A()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
+        cvarmi = islemlerStack.pop()
+        if cvarmi != "C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        C()
+        token = getToken()
+        if checkIfCExists():
+            P()
+        else:
+            C()
 
     elif token == '$':
-        son=islemlerStack.pop()
-        son=islemlerStack.pop()
-        if(son=='$'):
+        son = islemlerStack.pop()
+        son = islemlerStack.pop()
+        if(son == '$'):
             token = '.'
 
+
 def I():
-    # I   → '[' E '?'  C{C} ':' C{C} ']' 
-    # I   → '[' E '?' C{C} ']'
-    global siralama,token,islemlerStack
+
+    I.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+    global siralama, token, islemlerStack
     siralama.append("I")
 
-    E() 
-    token=getToken()
+    E()
+    token = getToken()
     if token == "?":
         islemlerStack.append(token)
-        token=getToken()#c
+        token = getToken()  # c
         islemlerStack.append(token)
-        C()# tek c geliyo
-        if token== ":":
+        C()
+        if token == ":":
             islemlerStack.append(token)
-            token =getToken()#c
+            token = getToken()  # c
             islemlerStack.append(token)
-            C()# tek c geliyo
+            C()
             islemlerStack.append(token)
-            #[E?C:C]
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
@@ -109,8 +140,7 @@ def I():
             islemlerStack.pop()
             islemlerStack.append("I")
 
-        elif token=="]":
-            #[E?C]
+        elif token == "]":
             islemlerStack.append(token)
             islemlerStack.pop()
             islemlerStack.pop()
@@ -124,23 +154,31 @@ def I():
     else:
         print("IF işlemlerinde '?' tokeni eksik.")
 
+
 def W():
-    # W → '{' E '?'  C{C} '}'
-    global siralama,token,islemlerStack
+    W.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+    global siralama, token, islemlerStack
     siralama.append("W")
 
-    token=getToken()
+    token = getToken()
     islemlerStack.append(token)
     E()
-    token=getToken()
+    token = getToken()
     if token == "?":
         islemlerStack.append(token)
-        token=getToken()#c
+        token = getToken()
         islemlerStack.append(token)
-        C()# tek c geliyo
-        token=getToken()#}
+        C()
+        token = getToken()
         islemlerStack.append(token)
-        #{E?C}
+
         islemlerStack.pop()
         islemlerStack.pop()
         islemlerStack.pop()
@@ -151,11 +189,20 @@ def W():
     else:
         print("WHILE işlemlerinde '?' tokeni eksik.")
 
+
 def A():
-    global siralama,token,islemlerStack
+    A.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+
+    global siralama, token, islemlerStack
     siralama.append("A")
-    # atama
-    # A  → K '=' E ';'
+
     K()
     token = getToken()
     islemlerStack.append(token)
@@ -163,110 +210,154 @@ def A():
         token = getToken()
         islemlerStack.append(token)
         E()
-        token = getToken() # noktalı virgülüde çıkarıyoruz
-        if token==";":
-            islemlerStack.pop()  # E çıktı
-            islemlerStack.pop()  # = çıktı
-            islemlerStack.pop()  # K çıktı
+        token = getToken() 
+        if token == ";":
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
             islemlerStack.append("A")
         else:
             print("Atama işlemlerinde ';' tokeni eksik.")
     else:
         print("Atama işlemlerinde '=' tokeni eksik.")
 
-def noktaliC():# def Ç()
-    # Ç  → '<' E ';'
-    global siralama,token,islemlerStack
+
+def noktaliC(): 
+
+    noktaliC.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+
+    global siralama, token, islemlerStack
     siralama.append("Ç")
 
-    token= getToken()
+    token = getToken()
     islemlerStack.append(token)
     E()
     islemlerStack.pop()
     islemlerStack.pop()
     islemlerStack.append("Ç")
-    token = getToken()#noktalı virgün çıksın
+    token = getToken()
     if token != ";":
         print("Girdi işlemlerinde ';' tokeni eksik.")
-    
+
+
 def G():
-    # G → '>' K ';'
-    global siralama,token,islemlerStack
-    siralama.append("G")
+
+    G.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
-    token= getToken()
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+    global siralama, token, islemlerStack
+    siralama.append("G")
+
+    token = getToken()
     islemlerStack.append(token)
     K()
     islemlerStack.pop()
     islemlerStack.pop()
     islemlerStack.append("G")
-    token = getToken()#noktalı virgün çıksın
+    token = getToken()
     if token != ";":
         print("Girdi işlemlerinde ';' tokeni eksik.")
-   
+
+
 def E():
-    # E → T {('+' | '-') T}  {-,+,T} 
-    global siralama,token,islemlerStack
+
+    E.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+
+    global siralama, token, islemlerStack
     siralama.append("E")
 
-    nonTerminal=["+","-"]
-    
+    nonTerminal = ["+", "-"]
+
     if token in nonTerminal:
-        islemlerStack.pop()#+ - çıkardı
-        islemlerStack.pop()#son kalan T
-        token=getToken()
+        islemlerStack.pop()
+        islemlerStack.pop()
+        token = getToken()
         islemlerStack.append(token)
         E()
-    
+
     else:
         T()
         islemlerStack.pop()
         islemlerStack.append("E")
-        #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
-        token=getToken()
+        token = getToken()
         if token in nonTerminal:
             islemlerStack.append(token)
             E()
         else:
             setToken(token)
-        
+
+
 def T():
-    # T → U {('*' | '/' | '%') U} u*u u/u u%u
-    global siralama,token,islemlerStack
+
+    T.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+
+    global siralama, token, islemlerStack
     siralama.append("T")
 
-    nonTerminal=["*","/","%"]
+    nonTerminal = ["*", "/", "%"]
 
     if token in nonTerminal:
-        islemlerStack.pop()#+ - çıkardı
-        islemlerStack.pop()#son kalan U
-        token=getToken()
+        islemlerStack.pop()
+        islemlerStack.pop()
+        token = getToken()
         islemlerStack.append(token)
         T()
-    
+
     else:
         U()
         islemlerStack.pop()
         islemlerStack.append("T")
-        #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
-        token=getToken()
+        token = getToken()
         if token in nonTerminal:
             islemlerStack.append(token)
             T()
         else:
             setToken(token)
-              
+
+
 def U():
-    global siralama,token,islemlerStack
+
+    U.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+
+    global siralama, token, islemlerStack
     siralama.append("U")
-    # U → F '^' U | F
-    # ihtimal 1 yok
-    F() 
-    token =getToken()
+    F()
+    token = getToken()
     if token == "^":
-        islemlerStack.pop()# F yi çıkar içerden
-        token=getToken()
-        islemlerStack.append(token)# yeni gelen eleman
+        islemlerStack.pop()
+        token = getToken()
+        islemlerStack.append(token)
         U()
     else:
         setToken(token)
@@ -274,12 +365,20 @@ def U():
         if son == "F":
             islemlerStack.append("U")
 
-def F():
-    # F → '(' E ')' | K |  R
 
-    global siralama,token,islemlerStack
+def F():
+
+    F.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+    global siralama, token, islemlerStack
     siralama.append("F")
- 
+
     if rakamMi(token) == True:
         R()
         islemlerStack.pop()
@@ -290,49 +389,65 @@ def F():
         islemlerStack.pop()
         islemlerStack.append("F")
 
-    elif token=="(":
-        token= getToken()
+    elif token == "(":
+        token = getToken()
         islemlerStack.append(token)
         E()
-        token=getToken()
+        token = getToken()
         islemlerStack.append(token)
-        if(token==")"):
+        if(token == ")"):
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.append("F")
         else:
-            print("Gruplama işleminde ')' tokeni eksik.") 
+            print("Gruplama işleminde ')' tokeni eksik.")
 
     else:
-        print("Gruplama işleminde beklenmedik token.") 
+        print("Gruplama işleminde beklenmedik token.")
 
 
 def K():
-    global siralama,token,islemlerStack
+    K.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
+    
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+
+    global siralama, token, islemlerStack
     siralama.append("K")
-    # harf
-    # K → 'a'  |  'b'  | … |  'z'
+
     if kucukHarfMi(token):
-        islemlerStack.pop()  
+        islemlerStack.pop()
         islemlerStack.append("K")
 
     else:
-         print("Gelen token küçük harf değil.")
-        # print girilen hatalı
+        print("Gelen token küçük harf değil.")
+
 
 def R():
+
+    R.counter += 1
+    parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter}"
+    childid = sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
+    if parentid == childid:
+        parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
     
-    global siralama,token,islemlerStack
+    tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
+    
+
+    global siralama, token, islemlerStack
     siralama.append("R")
-    # rakam
-    # R → '0'  |  '1'  | … |  '9'
+
     if rakamMi(token):
         islemlerStack.pop()
         islemlerStack.append("R")
     else:
         print("Gelen token rakam değil.")
-        # print girilen hatalı
+
 
 def rakamMi(rakam):
     rakamlarListesi = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -358,42 +473,58 @@ def kucukHarfMi(harf):
 
 
 def inputToStack():
-    global stack,inputString
+    global stack, inputString
     for i in reversed(range(len(inputString))):
         stack.append(inputString[i])
+
 
 def getToken():
     global stack
     top = stack.pop()
     return top
 
+
 def setToken(token):
     global stack
     stack.append(token)
 
 
+def checkIfCExists():
+    global islemlerStack
+    stack_ = set(islemlerStack)
+    if(len(stack_) == 2):
+        if ('$' in stack_) and ('C' in stack_) :
+            return True
+        else:
+            return False
+    else:
+        return False
 
-inputString = "n=5;n=5;{n-2*5?<n;n=n+1;}{n-2*5?<n;n=n+1;}[n-2?<n;][n-2?<n;]<n;>g;>g;"
-inputs="n=0;{n-2*5?<n;n=n+1;}"
+
+for func in ["P", "F", "U", "T", "E", "W", "I", "noktaliC", "G", "A", "C", "K", "R"]:
+    globals()[func].counter = 0
+
+
+inputString = "n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
 
-# Main buradan başlamaktadır.
-inputToStack()  # Global tanimlama
+
+inputToStack()
 token = getToken()
 islemlerStack.append(token)
-#---------------------
 
-#Agaç çizimi için treelib eklendi.
-from treelib import Node, Tree
-siralama=['P']
+siralama = ['P']
 tree = Tree()
-tree.create_node("P", "P") 
+tree.create_node("P", "P0")
 
-#---------------------
 
 P()
+print("Input String: ", inputString, "\n")
 
-print(siralama)
-#Ağacı göster
-#tree.show()
+print("Sıralama: ", siralama, "\n")
+
+print("Tree: ")
+tree.show()
+
+print("Sonuç: ", sonuc)
