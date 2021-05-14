@@ -1,73 +1,48 @@
 
 def P():
-    global islemlerStack,token
+    global islemlerStack
+    print("P içinde")
+    global token
     if token == ".":
         # program başarılı şekilde sonlandır.
         print("Accept")
     else:    
         C()  # geri döndüğünde token değişkeninde nokta olmalı global token?
+        print(islemlerStack)
+        print(token)
         P()
         
 
 
 def C():
+    print("c içinde")
     global siralama
+    siralama.append("C")
     global token
     global islemlerStack
-    siralama.append("C")
-    
     # işlem bittiğinde return .
-    # C  → I | W | A | Ç | G 
-
+    # C  → I | W | A | Ç | G
     if token == "[":
         token = getToken()
         islemlerStack.append(token)
         I()
-        
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
-            islemlerStack.append(cvarmi)
-       
         islemlerStack.append("C")
-        
         print(islemlerStack)
         token=getToken()
         print("c token")
         print(token)
-        if token != "$":
-            islemlerStack.append(token)
-        
         C()
 
 
     elif token == "{":
         W()
-        islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
-            islemlerStack.append(cvarmi)
-       
-        islemlerStack.append("C")
-        
-        print(islemlerStack)
-        token=getToken()
-        print("c token")
-        print(token)
-        if token != "$":
-            islemlerStack.append(token)
-        
-        C()
 
 
     elif token == "<":
 
         noktaliC()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
-            islemlerStack.append(cvarmi)
-
         islemlerStack.append("C")
         print(islemlerStack)
         token=getToken()
@@ -77,9 +52,6 @@ def C():
     elif token == ">":
         G()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
-            islemlerStack.append(cvarmi)
         islemlerStack.append("C")
         print(islemlerStack)
         token=getToken()
@@ -90,9 +62,6 @@ def C():
         
         A()
         islemlerStack.pop()
-        cvarmi=islemlerStack.pop()
-        if cvarmi!="C":
-            islemlerStack.append(cvarmi)
         islemlerStack.append("C")
         
         print(islemlerStack)
@@ -167,7 +136,6 @@ def I():
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
-            print("i içinde son",islemlerStack)
             islemlerStack.append("I")
             print(islemlerStack)
 
@@ -207,8 +175,6 @@ def W():
         islemlerStack.pop()
         islemlerStack.append("W")
         print(islemlerStack)
-        print("w son token",token)
-        setToken(token)
 
 
 
@@ -290,7 +256,7 @@ def E():
     global token
     global islemlerStack
     nonTerminal=["+","-"]
-    
+
     if token in nonTerminal:
         islemlerStack.pop()#+ - çıkardı
         islemlerStack.pop()#son kalan T
@@ -421,7 +387,7 @@ def K():
     # harf
     # K → 'a'  |  'b'  | … |  'z'
     if kucukHarfMi(token):
-        islemlerStack.pop()  
+        islemlerStack.pop()
         islemlerStack.append("K")
         print(islemlerStack)
 
@@ -491,7 +457,7 @@ def setToken(token):
 
 
 
-inputString = "n=5;n=5;{n-2*5?<n;n=n+1;}{n-2*5?<n;n=n+1;}[n-2?<n;][n-2?<n;]<n;>g;>g;"
+inputString = "n=0;{n-2*5?<n;n=n+1;}"
 inputs="n=0;{n-2*5?<n;n=n+1;}"
 islemlerStack = ['$']
 stack = ['$']
