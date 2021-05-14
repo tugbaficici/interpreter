@@ -520,7 +520,9 @@ tree.create_node("P", "P0")
 
 
 P()
-print("Sıralama: ", siralama)
+print("Input String: ", inputString, "\n")
+
+print("Sıralama: ", siralama, "\n")
 
 print("Tree: ")
 tree.show()
