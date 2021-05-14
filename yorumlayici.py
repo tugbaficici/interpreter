@@ -11,11 +11,8 @@ def P():
 
 
 def C():
-    global siralama
-    global token
-    global islemlerStack
+    global siralama,token,islemlerStack
     siralama.append("C")
-    
     # işlem bittiğinde return .
     # C  → I | W | A | Ç | G 
 
@@ -23,23 +20,15 @@ def C():
         token = getToken()
         islemlerStack.append(token)
         I()
-        
         islemlerStack.pop()
         cvarmi=islemlerStack.pop()
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
-       
         islemlerStack.append("C")
-        
-        print(islemlerStack)
         token=getToken()
-        print("c token")
-        print(token)
         if token != "$":
             islemlerStack.append(token)
-        
         C()
-
 
     elif token == "{":
         W()
@@ -47,32 +36,21 @@ def C():
         cvarmi=islemlerStack.pop()
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
-       
         islemlerStack.append("C")
-        
-        print(islemlerStack)
         token=getToken()
-        print("c token")
-        print(token)
         if token != "$":
             islemlerStack.append(token)
-        
         C()
 
-
     elif token == "<":
-
         noktaliC()
         islemlerStack.pop()
         cvarmi=islemlerStack.pop()
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
-
         islemlerStack.append("C")
-        print(islemlerStack)
         token=getToken()
         C()
-
 
     elif token == ">":
         G()
@@ -81,26 +59,20 @@ def C():
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        print(islemlerStack)
         token=getToken()
         C()
 
-
     elif kucukHarfMi(token) == True:  # token harf ise
-        
         A()
         islemlerStack.pop()
         cvarmi=islemlerStack.pop()
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        
-        print(islemlerStack)
         token=getToken()
         C()
 
     elif token == '$':
-        
         son=islemlerStack.pop()
         son=islemlerStack.pop()
         if(son=='$'):
@@ -113,40 +85,22 @@ def C():
 def I():
     # I   → '[' E '?'  C{C} ':' C{C} ']' 
     # I   → '[' E '?' C{C} ']'
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("I")
-    global token
-    global islemlerStack
-    #####stackte [E  var
 
-    
-    
-    
     E() 
-    
-    print(islemlerStack)
     token=getToken()
-    print("token")
-    print(token)
     if token == "?":
         islemlerStack.append(token)
         token=getToken()#c
         islemlerStack.append(token)
-        
         C()# tek c geliyo
-        print(" :token")
-        print(token)
-        print(islemlerStack)
-        
         if token== ":":
             islemlerStack.append(token)
             token =getToken()#c
             islemlerStack.append(token)
             C()# tek c geliyo
-            #]
             islemlerStack.append(token)
-            print("token ] sanılan")
-            print(token)
             #[E?C:C]
             islemlerStack.pop()
             islemlerStack.pop()
@@ -156,8 +110,6 @@ def I():
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.append("I")
-            print(islemlerStack)
-
 
         elif token=="]":
             #[E?C]
@@ -167,38 +119,27 @@ def I():
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.pop()
-            print("i içinde son",islemlerStack)
             islemlerStack.append("I")
-            print(islemlerStack)
 
         else:
             print("sembol hatası")
 
-
-
-
 def W():
     # W → '{' E '?'  C{C} '}'
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("W")
-    global token
-    global islemlerStack
 
     token=getToken()
     islemlerStack.append(token)
-    
     E()
     token=getToken()
     if token == "?":
         islemlerStack.append(token)
-        print(islemlerStack)
         token=getToken()#c
         islemlerStack.append(token)
         C()# tek c geliyo
         token=getToken()#}
         islemlerStack.append(token)
-        print(islemlerStack)
-
         #{E?C}
         islemlerStack.pop()
         islemlerStack.pop()
@@ -206,19 +147,11 @@ def W():
         islemlerStack.pop()
         islemlerStack.pop()
         islemlerStack.append("W")
-        print(islemlerStack)
-        print("w son token",token)
         setToken(token)
 
-
-
-
 def A():
-    print("a içinde")
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("A")
-    global token
-    global islemlerStack
     # atama
     # A  → K '=' E ';'
     K()
@@ -227,30 +160,22 @@ def A():
     if token == "=":
         token = getToken()
         islemlerStack.append(token)
-        print(islemlerStack)
         E()
-        # elimizde bir sonraki token var 
-        print(islemlerStack)
-        print(token)
         token = getToken() # noktalı virgülüde çıkarıyoruz
         if token==";":
             islemlerStack.pop()  # E çıktı
             islemlerStack.pop()  # = çıktı
             islemlerStack.pop()  # K çıktı
             islemlerStack.append("A")
-            print(islemlerStack)
         else:
             print("atama hatası")
     else:
         print("Atama sembolü eksik")
 
-
 def noktaliC():# def Ç()
     # Ç  → '<' E ';'
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("Ç")
-    global token
-    global islemlerStack
 
     token= getToken()
     islemlerStack.append(token)
@@ -259,17 +184,11 @@ def noktaliC():# def Ç()
     islemlerStack.pop()
     islemlerStack.append("Ç")
     token = getToken()#noktalı virgün çıksın
-    print(islemlerStack)
     
-    
-
-
 def G():
     # G → '>' K ';'
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("G")
-    global token
-    global islemlerStack
     
     token= getToken()
     islemlerStack.append(token)
@@ -278,17 +197,12 @@ def G():
     islemlerStack.pop()
     islemlerStack.append("G")
     token = getToken()#noktalı virgün çıksın
-    print(islemlerStack)
-
-    
-
-
+   
 def E():
     # E → T {('+' | '-') T}  {-,+,T} 
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("E")
-    global token
-    global islemlerStack
+
     nonTerminal=["+","-"]
     
     if token in nonTerminal:
@@ -296,15 +210,12 @@ def E():
         islemlerStack.pop()#son kalan T
         token=getToken()
         islemlerStack.append(token)
-        print(islemlerStack)
         E()
     
     else:
         T()
-        print(islemlerStack)
         islemlerStack.pop()
         islemlerStack.append("E")
-        print(islemlerStack)
         #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
         token=getToken()
         if token in nonTerminal:
@@ -313,17 +224,11 @@ def E():
         else:
             setToken(token)
         
-
-
-
 def T():
     # T → U {('*' | '/' | '%') U} u*u u/u u%u
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("T")
-    print("t içinde")
-    global token
-    global islemlerStack
-    
+
     nonTerminal=["*","/","%"]
 
     if token in nonTerminal:
@@ -331,31 +236,23 @@ def T():
         islemlerStack.pop()#son kalan U
         token=getToken()
         islemlerStack.append(token)
-        print(islemlerStack)
         T()
     
     else:
         U()
         islemlerStack.pop()
         islemlerStack.append("T")
-        print(islemlerStack)
         #bir sonraki token + - den farklıysa bu işlem biter ama değilse e yeniden çağırılır
         token=getToken()
-        print(token)
         if token in nonTerminal:
             islemlerStack.append(token)
             T()
         else:
             setToken(token)
-        
-            
-
+              
 def U():
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("U")
-    print("u içinde")
-    global token
-    global islemlerStack
     # U → F '^' U | F
     # ihtimal 1 yok
     F() 
@@ -364,38 +261,28 @@ def U():
         islemlerStack.pop()# F yi çıkar içerden
         token=getToken()
         islemlerStack.append(token)# yeni gelen eleman
-        print(islemlerStack)
         U()
     else:
         setToken(token)
         son = islemlerStack.pop()
         if son == "F":
             islemlerStack.append("U")
-            print(islemlerStack)
-
 
 def F():
     # F → '(' E ')' | K |  R
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("F")
-    print("f içinde")
-    global islemlerStack
-    global token
-   
-    print(token)
-    print(rakamMi(token))
-    
+ 
     if rakamMi(token) == True:
         R()
         islemlerStack.pop()
         islemlerStack.append("F")
-        print(islemlerStack)
+
     elif kucukHarfMi(token) == True:
-        print("harf")
         K()
         islemlerStack.pop()
         islemlerStack.append("F")
-        print(islemlerStack)
+
     elif token=="(":
         token= getToken()
         islemlerStack.append(token)
@@ -407,45 +294,35 @@ def F():
             islemlerStack.pop()
             islemlerStack.pop()
             islemlerStack.append("F")
-            print(islemlerStack) 
+
     else:
         return "Hata ! Gecersiz string !"
 
 
 def K():
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("K")
-    print("k içinde")
-    global token
-    global islemlerStack
     # harf
     # K → 'a'  |  'b'  | … |  'z'
     if kucukHarfMi(token):
         islemlerStack.pop()  
         islemlerStack.append("K")
-        print(islemlerStack)
 
     else:
         return False
         # print girilen hatalı
 
-
 def R():
-    global siralama
+    global siralama,token,islemlerStack
     siralama.append("R")
-    print("r içinde")
-    global token
-    global islemlerStack
     # rakam
     # R → '0'  |  '1'  | … |  '9'
     if rakamMi(token):
         islemlerStack.pop()
         islemlerStack.append("R")
-        print(islemlerStack)
     else:
         return False
         # print girilen hatalı
-
 
 def rakamMi(rakam):
     rakamlarListesi = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -471,11 +348,9 @@ def kucukHarfMi(harf):
 
 
 def inputToStack():
-    global stack
-    global inputString
+    global stack,inputString
     for i in reversed(range(len(inputString))):
         stack.append(inputString[i])
-
 
 def getToken():
     global stack
@@ -485,10 +360,6 @@ def getToken():
 def setToken(token):
     global stack
     stack.append(token)
-
-
-
-
 
 
 inputString = "n=5;n=5;{n-2*5?<n;n=n+1;}{n-2*5?<n;n=n+1;}[n-2?<n;][n-2?<n;]<n;>g;>g;"
@@ -507,7 +378,6 @@ from treelib import Node, Tree
 siralama=['P']
 tree = Tree()
 tree.create_node("P", "P") 
-
 
 #---------------------
 
