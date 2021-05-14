@@ -3,13 +3,22 @@ import sys
 
 def P():
     global islemlerStack,token
+    print("p token", token)
+    print("p stack", islemlerStack)
     if token == ".":
         # program başarılı şekilde sonlandır.
         print("Accept")
-    else: 
-         
-        C()  # geri döndüğünde token değişkeninde nokta olmalı global token?
-        P()
+    else:          
+        C()
+
+        if token == ".":
+            P()
+        else:
+            token = getToken()
+            if token != "$":
+                islemlerStack.append(token)
+            C()
+            P()
         
 
 
@@ -19,9 +28,9 @@ def C():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
 
     #parentid=sys._getframe(1).f_code.co_name+
     #tree.create_node("C","",parent="C2" )
@@ -29,7 +38,8 @@ def C():
     siralama.append("C")
     # işlem bittiğinde return .
     # C  → I | W | A | Ç | G 
-
+    print("c token", token)
+    print("c stack", islemlerStack)
     if token == "[":
         token = getToken()
         islemlerStack.append(token)
@@ -39,10 +49,6 @@ def C():
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        if token != "$":
-            islemlerStack.append(token)
-        C()
 
     elif token == "{":
         W()
@@ -51,20 +57,15 @@ def C():
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        if token != "$":
-            islemlerStack.append(token)
-        C()
 
     elif token == "<":
         noktaliC()
+        print("noktalic stack", islemlerStack)
         islemlerStack.pop()
         cvarmi=islemlerStack.pop()
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        C()
 
     elif token == ">":
         G()
@@ -73,8 +74,6 @@ def C():
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        C()
 
     elif kucukHarfMi(token) == True:  # token harf ise
         A()
@@ -83,14 +82,15 @@ def C():
         if cvarmi!="C":
             islemlerStack.append(cvarmi)
         islemlerStack.append("C")
-        token=getToken()
-        C()
 
     elif token == '$':
         son=islemlerStack.pop()
         son=islemlerStack.pop()
+        print("geldi mi", islemlerStack)
         if(son=='$'):
             token = '.'
+    else: 
+        print("düştü")
 
 def I():
     
@@ -100,9 +100,9 @@ def I():
                                                    [sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    print(parentid, childid, "created")
+    
 
     # I   → '[' E '?'  C{C} ':' C{C} ']' 
     # I   → '[' E '?' C{C} ']'
@@ -154,9 +154,9 @@ def W():
                                                    [sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    print(parentid, childid, "created")
+    
     # W → '{' E '?'  C{C} '}'
     global siralama,token,islemlerStack
     siralama.append("W")
@@ -172,14 +172,17 @@ def W():
         C()# tek c geliyo
         token=getToken()#}
         islemlerStack.append(token)
-        #{E?C}
-        islemlerStack.pop()
-        islemlerStack.pop()
-        islemlerStack.pop()
-        islemlerStack.pop()
-        islemlerStack.pop()
-        islemlerStack.append("W")
-        setToken(token)
+        if token != "}":
+            C()
+        else:
+            #{E?C}
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.pop()
+            islemlerStack.append("W")
+            setToken(token)
     else:
         print("WHILE işlemlerinde '?' tokeni eksik.")
 
@@ -190,9 +193,9 @@ def A():
                                                    [sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    print(parentid, childid, "created")
+    
 
     global siralama,token,islemlerStack
     siralama.append("A")
@@ -225,9 +228,9 @@ def noktaliC():# def Ç()
                                                    [sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    print(parentid, childid, "created")
+    
 
     global siralama,token,islemlerStack
     siralama.append("Ç")
@@ -249,9 +252,9 @@ def G():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
 
     # G → '>' K ';'
     global siralama,token,islemlerStack
@@ -274,9 +277,9 @@ def E():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
 
     # E → T {('+' | '-') T}  {-,+,T} 
     global siralama,token,islemlerStack
@@ -310,9 +313,9 @@ def T():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
 
     # T → U {('*' | '/' | '%') U} u*u u/u u%u
     global siralama,token,islemlerStack
@@ -346,9 +349,9 @@ def U():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
 
     global siralama,token,islemlerStack
     siralama.append("U")
@@ -374,9 +377,9 @@ def F():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
 
     # F → '(' E ')' | K |  R
     
@@ -418,9 +421,9 @@ def K():
                                                    [sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name, childid, parent=parentid)
-    print(parentid, childid, "created")
+    
     
     global siralama,token,islemlerStack
     siralama.append("K")
@@ -441,9 +444,9 @@ def R():
     childid=sys._getframe().f_code.co_name + str(globals()[sys._getframe().f_code.co_name].counter)
     if parentid == childid:
         parentid = f"{sys._getframe(1).f_code.co_name}{globals()[sys._getframe(1).f_code.co_name].counter - 1}"
-    print("trying to create", parentid, childid)
+    
     tree.create_node(sys._getframe().f_code.co_name,childid,parent=parentid )
-    print(parentid, childid, "created")
+    
     
     global siralama,token,islemlerStack
     siralama.append("R")
